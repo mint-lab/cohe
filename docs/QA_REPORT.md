@@ -1,5 +1,13 @@
 # Website validation
 
+## Homepage polish, 375 px and 1280 px
+
+The current revision adds a fixed four-link navigation with a native mobile menu, a question-led hero with data-backed metrics, three always-visible gate steps, a collapsed full abstract, a consolidated four-point Scope box, and a reproduction-coverage table checked against the artifact documentation. The updated social preview is 1200×630. Whisker plot geometry and every `src/data/` file are preserved.
+
+`npm run check` and `npm run build` pass. Production-browser verification at 375 and 1280 px confirms exact metric and chart values, full abstract text, metadata decoding, all local resources, citation copying, navigation, absence of overflow, and zero WCAG 2 A/AA and 2.1 AA axe violations. A JavaScript-disabled mobile visit also passes. Screenshots, logs, data hashes and the check report are retained in `../NeurIPS/homepage_polish_20261008/`; these local evidence files are not published with the website.
+
+The previous sections below describe earlier versions. Their interactive gate tabs have been replaced by static step cards. No new Lighthouse result is claimed. Publication uses the existing GitHub Actions workflow for `mint-lab.github.io/cohe/`; live verification and deployment records are retained in `../NeurIPS/homepage_polish_20261008/deployment/`.
+
 ## Final revision, local validation
 
 This camera-ready revision changes the question-led hero, separates DINOv2 first-learning prediction from selection accuracy, clarifies endpoint-specific Gate 3, adds a verified three-step Apply COHE section, consolidates scope, and adds a local PDF and 1200×630 social preview. It preserves the existing academic design, numerical result records, author order, and artifact release.

@@ -5,10 +5,23 @@ import EffectPlot from '../components/EffectPlot.astro';
 import { results, artifact, release, paper, source, number, bibtex } from '../data/results';
 const base = import.meta.env.BASE_URL;
 const title = 'COHE: Auditing Non-Transitivity in Sample Difficulty Proxies for Vision Models';
-const description =
-  'When does a sample difficulty proxy actually help? COHE audits dependence, held-out prediction, and protocol-specific operational transfer. NeurIPS 2026 Evaluations & Datasets.';
+const description = 'COHE studies when sample difficulty scores predict learning and when they help data selection. NeurIPS 2026 Evaluations & Datasets.';
 const canonical = Astro.site ? new URL(base, Astro.site).href : undefined;
 const socialImage = canonical ? new URL('og-image.png', canonical).href : `${base}og-image.png`;
+const navigation = [
+  { href: '#framework', label: 'Framework' },
+  { href: '#results', label: 'Results' },
+  { href: '#reproducibility', label: 'Reproducibility' },
+  { href: '#citation', label: 'Citation' },
+];
+const coverage = [
+  ['CIFAR-100, ResNet-18', 'Training', 'Available', 'Available', '120', 'Dataset and score inputs required.'],
+  ['CIFAR-100, ResNet-50', 'Training', 'Available', 'Available', 'Not retained', 'Second-learner results remain available.'],
+  ['DINOv2 selection', 'Selection', 'Available', 'Available', 'Not retained', 'Scalar ranks and all reported conditions included.'],
+  ['DDPM ordering', 'Ordering', 'Available', 'Available', '18 of 24', 'Random and Easy-to-Hard seeds 0–2 are missing.'],
+  ['ImageNet-10', 'Scoring / fine-tuning', 'Available', 'Available', 'Not retained', 'Imagenette and score inputs required.'],
+  ['ImageNet-1K VAE selection', 'Scoring / training', 'Available', 'Available', '20', 'ImageNet, VAE weights and training scores required.'],
+];
 ---
 
 <!doctype html>
@@ -24,134 +37,104 @@ const socialImage = canonical ? new URL('og-image.png', canonical).href : `${bas
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:site_name" content="COHE · NeurIPS 2026" />
+    <meta property="og:site_name" content="COHE" />
     {canonical && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={socialImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="COHE audits dependence, prediction, and operational transfer." />
+    <meta property="og:image:alt" content="When does a sample difficulty proxy actually help? COHE compares dependence, prediction and transfer." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
-    <meta name="twitter:image:alt" content="COHE audits dependence, prediction, and operational transfer." />
+    <meta name="twitter:image:alt" content="When does a sample difficulty proxy actually help? COHE compares dependence, prediction and transfer." />
   </head>
-
   <body>
-    <a class="skip-link" href="#main">
-      Skip to content
-    </a>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="nav-inner container">
+        <a class="wordmark" href="#main" aria-label="COHE home">COHE</a>
+        <nav class="desktop-nav" aria-label="Main navigation">
+          {navigation.map(item => <a href={item.href}>{item.label}</a>)}
+        </nav>
+        <details class="mobile-nav" id="mobile-navigation">
+          <summary>Menu</summary>
+          <nav aria-label="Mobile navigation">
+            {navigation.map(item => <a href={item.href}>{item.label}</a>)}
+          </nav>
+        </details>
+      </div>
+    </header>
     <main id="main" class="container">
       <header class="hero" aria-labelledby="hero-question">
-        <p class="venue">NeurIPS 2026 · Evaluations &amp; Datasets Track</p>
         <h1 id="hero-question">When does a sample difficulty proxy actually help?</h1>
-        <p id="paper-title" class="paper-title">
-          <span>COHE: Auditing Non-Transitivity in</span>{' '}
-          <span>Sample Difficulty Proxies for Vision Models</span>
-        </p>
-        <p class="hero-summary">
-          A proxy can predict one measure of difficulty without improving a training policy.
-          COHE keeps rank alignment, held-out prediction, and downstream benefit tied to
-          their own evidence and evaluation protocol.
-        </p>
-        <p class="authors">
-          Dayena Jeong<sup>1</sup> <span aria-hidden="true">·</span> Sunglok Choi<sup>2</sup>
-        </p>
+        <p id="paper-title" class="paper-title">{title}</p>
+        <p class="venue">NeurIPS 2026 · Evaluations &amp; Datasets</p>
+        <p class="authors">Dayena Jeong<sup>1</sup> and Sunglok Choi<sup>2</sup></p>
         <p class="university">Seoul National University of Science and Technology</p>
         <details class="affiliations">
-          <summary>Department affiliations</summary>
-          <p>
-            <sup>1</sup> Department of Defense Artificial Intelligence Applications
-          </p>
-          <p>
-            <sup>2</sup> Department of Computer Science and Engineering
-          </p>
+          <summary>Affiliations</summary>
+          <p><sup>1</sup> Department of Defense Artificial Intelligence Applications</p>
+          <p><sup>2</sup> Department of Computer Science and Engineering</p>
         </details>
+        <p class="hero-summary">
+          DINOv2 predicts first-learning (ρ = {number(results.firstLearning.rho, 2)}), yet
+          hard-sample selection returns {number(results.dino[0].delta, 1)} pp versus Random
+          at {results.dino[0].label.replace(' subset', '')}.
+        </p>
+        <div class="hero-metrics" aria-label="DINOv2 evidence at three levels">
+          <div><span>G1 — Dependence</span><strong>ρ = {number(results.firstLearning.rho, 4)}</strong><small>First-learning ranks</small></div>
+          <div><span>G2 — Prediction</span><strong>R² = {number(results.firstLearning.r2, 4)}</strong><small>Held-out first-learning</small></div>
+          <div><span>G3 — Selection</span><strong>{number(results.dino[0].delta)} <small>pp</small></strong><small>{results.dino[0].label.replace(' subset', '')} subset, test Top-1</small></div>
+        </div>
         <nav class="hero-actions" aria-label="Paper resources">
-          <a class="button" href={`${base}paper.pdf`}>
-            Paper PDF
-          </a>
-          <a class="button" href={artifact}>
-            Code
-          </a>
-          <a class="button" href={release}>
-            Checkpoints
-          </a>
+          <a class="button" href={`${base}paper.pdf`}>Paper</a>
+          <a class="button" href={artifact}>Code</a>
+          <a class="button" href={release}>Checkpoints</a>
         </nav>
         <a class="conference-link" href={paper}>Conference record</a>
       </header>
 
-      <section id="motivation" class="section" aria-labelledby="motivation-title">
-        <h2 id="motivation-title">Key Finding</h2>
-        <p>
-          DINOv2 isolation predicts <strong>first-learning</strong> on CIFAR-100
-          (ρ = {number(results.firstLearning.rho, 4)}, R² = {number(results.firstLearning.r2, 4)}).
-          Selecting its hardest 10% of training samples instead gives{' '}
-          <strong>{number(results.dino[0].delta)} pp</strong> in ResNet-18 test Top-1 versus Random.
+      <section id="abstract" class="section overview" aria-labelledby="abstract-title">
+        <h2 id="abstract-title">The study</h2>
+        <p class="reading-width">
+          Difficulty depends on what a model is asked to do. COHE separates agreement with a
+          target, prediction on unseen samples, and the benefit of using a score in practice.
+          Tests on vision benchmarks show that these forms of evidence can lead to different
+          conclusions. The released code and results make each check inspectable.
         </p>
-        <p>
-          These evaluate different targets and protocols: predicting a sample's learning
-          dynamics and measuring accuracy after subset retraining. The selection result
-          does not invalidate the first-learning relation.
-        </p>
+        <details class="abstract-details">
+          <summary>Read the full abstract</summary>
+          <p class="abstract reading-width">{results.abstract}</p>
+        </details>
       </section>
 
       <Gates />
 
-      <section id="abstract" class="section" aria-labelledby="abstract-title">
-        <h2 id="abstract-title">Abstract</h2>
-        <p class="abstract">{results.abstract}</p>
-      </section>
-
-      <section id="findings" class="section" aria-labelledby="findings-title">
-        <h2 id="findings-title">Experimental Results</h2>
-        <p>
-          Three operational case studies. Each comparison stays within its declared policy and
-          learner.
-        </p>
+      <section id="results" class="section" aria-labelledby="results-title">
+        <span id="findings" class="anchor-alias" aria-hidden="true"></span>
+        <h2 id="results-title">Experimental results</h2>
+        <p class="reading-width">Selection, ordering and retrieval test different uses of a difficulty score.</p>
         <article class="case-study">
           <div class="case-copy">
-            <h3>DINOv2 Hard-Sample Selection</h3>
-            <p class="experiment-label">CIFAR-100 · DINOv2 isolation</p>
-            <p>Direct hard-only selection underperforms Random in all four conditions.</p>
-            <p class="scope">
-              ResNet-18 · four conditions × five paired seeds. All 20 differences are negative;
-              the conditions reuse seeds and are not 20 independent repetitions.
-              Balanced selection uses a balanced Random baseline.
+            <h3>DINOv2 hard-sample selection</h3>
+            <p class="experiment-label">CIFAR-100, DINOv2 isolation</p>
+            <p>Hard-only selection underperforms Random in every tested condition.</p>
+            <p class="experiment-meta">
+              ResNet-18, {results.dino.length} conditions with {results.dino[0].n} paired seeds
+              each. Seed IDs are reused across conditions. Balanced selection uses balanced Random.
             </p>
-            <a class="source-link" href={source(results.sources.dino)}>
-              Seed records &amp; provenance
-            </a>
+            <a class="source-link" href={source(results.sources.dino)}>Seed records</a>
           </div>
           <div class="case-figure">
-            <EffectPlot
-              rows={results.dino}
-              min={-20}
-              max={0}
-              ticks={[-20, -15, -10, -5, 0]}
-              label="DINOv2 hard-selection differences versus matched Random"
-            />
+            <EffectPlot rows={results.dino} min={-20} max={0} ticks={[-20, -15, -10, -5, 0]} label="DINOv2 hard-selection differences versus matched Random" />
             <details class="seed-details">
               <summary>Mean accuracy and matched baselines</summary>
-              <div class="table-scroll">
+              <div class="table-scroll" tabindex="0" role="region" aria-label="DINOv2 accuracy table">
                 <table>
                   <caption>DINOv2, Top-1 accuracy (%)</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">Selection</th>
-                      <th scope="col">Hard</th>
-                      <th scope="col">Random</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {results.dino.map((r) => (
-                      <tr>
-                        <th scope="row">{r.label}</th>
-                        <td>{number(r.hardMean, 2)}</td>
-                        <td>{number(r.randomMean, 2)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
+                  <thead><tr><th scope="col">Selection</th><th scope="col">Hard</th><th scope="col">Random</th></tr></thead>
+                  <tbody>{results.dino.map(r => <tr><th scope="row">{r.label}</th><td>{number(r.hardMean)}</td><td>{number(r.randomMean)}</td></tr>)}</tbody>
                 </table>
               </div>
             </details>
@@ -159,230 +142,122 @@ const socialImage = canonical ? new URL('og-image.png', canonical).href : `${bas
         </article>
         <article class="case-study">
           <div class="case-copy">
-            <h3>DDPM Sample Ordering</h3>
-            <p class="experiment-label">CIFAR-100 · DDPM difficulty scores</p>
-            <p>
-              Easy-to-Hard and Shuffled-Proxy Order both fall below global Random ordering.
-              Their difference is not statistically established.
-            </p>
-            <p class="scope">
-              ResNet-18 · eight paired seeds · 200 epochs. All 50,000 samples appear once per
-              epoch, using ten fixed bins and matched step counts.
-            </p>
-            <p class="case-limit">The matched blocked-order control does not isolate harm from true score–sample correspondence.</p>
-            <a class="source-link" href={source(results.sources.ddpm)}>
-              Seed records &amp; provenance
-            </a>
+            <h3>DDPM sample ordering</h3>
+            <p class="experiment-label">CIFAR-100, DDPM difficulty scores</p>
+            <p>Easy-to-Hard and Shuffled-Proxy Order both fall below global Random ordering.</p>
+            <p class="experiment-meta">ResNet-18, {results.ddpm[0].n} paired seeds. Both blocked schedules use the same full data and optimizer step count.</p>
+            <a class="source-link" href={source(results.sources.ddpm)}>Seed records</a>
           </div>
           <div class="case-figure">
-            <EffectPlot
-              rows={results.ddpm.slice(0, 2)}
-              min={-1.4}
-              max={0.4}
-              ticks={[-1, -0.5, 0]}
-              label="DDPM blocked-ordering differences versus global Random"
-            />
+            <EffectPlot rows={results.ddpm.slice(0, 2)} min={-1.4} max={0.4} ticks={[-1, -0.5, 0]} label="DDPM blocked-ordering differences versus global Random" />
             <div class="comparison-note">
-              <span class="overline">The correspondence control</span>
-              <strong>
-                {number(results.ddpm[2].delta)} <small>pp · Easy − Shuffled</small>
-              </strong>
-              <span>
-                95% CI [{number(results.ddpm[2].ci[0])}, {number(results.ddpm[2].ci[1])}] ·
-                paired p = {results.ddpm[2].p.toFixed(4)}
-              </span>
+              <span class="overline">Easy − Shuffled</span>
+              <strong>{number(results.ddpm[2].delta)} <small>pp</small></strong>
+              <span>95% CI [{number(results.ddpm[2].ci[0])}, {number(results.ddpm[2].ci[1])}]; paired p = {results.ddpm[2].p.toFixed(4)}</span>
             </div>
           </div>
         </article>
         <article class="case-study">
           <div class="case-copy">
-            <h3>ImageNet-1K Subset Selection</h3>
-            <p class="experiment-label">ImageNet-1K · VAE reconstruction scores</p>
-            <p>
-              Class-balanced VAE-hard selection at a 30% budget underperforms balanced Random
-              by <strong>{number(-results.imagenet.best.delta, 3)} percentage points</strong>.
-            </p>
-            <p class="scope">
-              ResNet-18 from scratch · 90 epochs · five matched seed pairs. Both arms use the
-              same best-validation-Top-1 checkpoint rule.
-            </p>
-            <a class="source-link" href={source(results.sources.imagenet)}>
-              Seed records &amp; provenance
-            </a>
+            <h3>ImageNet-1K subset selection</h3>
+            <p class="experiment-label">ImageNet-1K, VAE reconstruction scores</p>
+            <p>Class-balanced VAE-hard selection underperforms balanced Random.</p>
+            <p class="experiment-meta">ResNet-18 from scratch, {results.imagenet.best.n} matched seed pairs. Both arms use the same best-validation-Top-1 checkpoint rule.</p>
+            <a class="source-link" href={source(results.sources.imagenet)}>Seed records</a>
           </div>
           <div class="case-figure">
-            <figure
-              class="accuracy-chart"
-              aria-label="Mean ImageNet-1K best-checkpoint Top-1 accuracy"
-            >
-              <div class="plot-key">
-                <span>Best-checkpoint Top-1</span>
-                <span>Accuracy, %</span>
-              </div>
-              {[
-                { label: 'Proxy-Hard', value: results.imagenet.best.hardMean },
-                { label: 'Random', value: results.imagenet.best.randomMean },
-              ].map((r, i) => (
+            <figure class="accuracy-chart" aria-label="Mean ImageNet-1K best-checkpoint Top-1 accuracy">
+              <div class="plot-key"><span>Best-checkpoint Top-1</span><span>Accuracy (%)</span></div>
+              {[{label: 'Proxy-Hard', value: results.imagenet.best.hardMean}, {label: 'Random', value: results.imagenet.best.randomMean}].map((r, i) => (
                 <div class="accuracy-row">
-                  <div>
-                    <span>{r.label}</span>
-                    <strong>{number(r.value, 3)}%</strong>
-                  </div>
-                  <div class="accuracy-track">
-                    <span
-                      class={i === 0 ? 'hard-bar' : 'random-bar'}
-                      style={`width:${(r.value / 70) * 100}%`}
-                    ></span>
-                  </div>
+                  <div><span>{r.label}</span><strong>{number(r.value, 3)}%</strong></div>
+                  <div class="accuracy-track"><span class={i === 0 ? 'hard-bar' : 'random-bar'} style={`width:${(r.value / 70) * 100}%`}></span></div>
                 </div>
               ))}
-              <div class="accuracy-axis">
-                <span>0</span>
-                <span>35</span>
-                <span>70%</span>
-              </div>
-              <figcaption>
-                Means from the five seed records. The bars show accuracy; the confidence
-                interval below is for the paired difference.
-              </figcaption>
+              <div class="accuracy-axis"><span>0</span><span>35</span><span>70%</span></div>
+              <figcaption>Mean accuracy across {results.imagenet.best.n} seeds. The interval below compares the paired difference.</figcaption>
             </figure>
             <div class="comparison-note">
               <span class="overline">Hard − Random</span>
-              <strong>
-                {number(results.imagenet.best.delta, 3)} <small>percentage points</small>
-              </strong>
-              <span>
-                95% CI [{number(results.imagenet.best.ci[0], 3)},{' '}
-                {number(results.imagenet.best.ci[1], 3)}]
-              </span>
+              <strong>{number(results.imagenet.best.delta, 3)} <small>pp</small></strong>
+              <span>95% CI [{number(results.imagenet.best.ci[0], 3)}, {number(results.imagenet.best.ci[1], 3)}]</span>
             </div>
             <details class="seed-details">
               <summary>Endpoint and evaluation details</summary>
-              <p>
-                VAE: stabilityai/sd-vae-ft-mse normalized-pixel reconstruction MSE. Select the
-                largest scores within each training class; 384,300 training images per arm.
-                Full 50,000-image validation is used for checkpoint selection and evaluation.
-                Validation images do not enter the selection-score source.
-              </p>
-              <p>
-                The final-epoch-90 sensitivity endpoint gives{' '}
-                {number(results.imagenet.final.delta, 3)} pp, 95% CI [
-                {number(results.imagenet.final.ci[0], 3)},{' '}
-                {number(results.imagenet.final.ci[1], 3)}].
-              </p>
+              <p>VAE: stabilityai/sd-vae-ft-mse normalized-pixel reconstruction MSE. The largest scores are selected within each training class. Validation data is used for checkpoint selection and evaluation.</p>
+              <p>Final-epoch sensitivity: {number(results.imagenet.final.delta, 3)} pp, 95% CI [{number(results.imagenet.final.ci[0], 3)}, {number(results.imagenet.final.ci[1], 3)}].</p>
             </details>
           </div>
         </article>
         <aside class="positive-control">
-          <div>
-            <h3>Task-Aligned Positive Control</h3>
-            <p>
-              Task-aligned ImageNet ResNet-18 CE → ResNet-50 CE passes all three gates for the
-              declared retrieval/triage setting. At top 10%, it retrieves{' '}
-              <strong>{number(results.positive.gate3[0].recall * 100, 2)}%</strong> of the
-              target-hard samples versus 10% expected under Random.
-            </p>
-            <p class="scope">
-              This supports retrieval/triage within that setting. It does not establish
-              generative-proxy validity or subset-retraining benefit.
-            </p>
-          </div>
-          <a class="source-link" href={source(results.sources.positive)}>
-            Control evidence
-          </a>
+          <h3>Task-aligned retrieval</h3>
+          <p class="reading-width">
+            ResNet-18 CE retrieves <strong>{number(results.positive.gate3[0].recall * 100)}%</strong>
+            of ResNet-50's target-hard samples at a top-{number(results.positive.gate3[0].q * 100, 0)}%
+            budget, compared with {number(results.positive.gate3[0].q * 100, 0)}% expected under Random.
+          </p>
+          <a class="source-link" href={source(results.sources.positive)}>Control evidence</a>
         </aside>
-      </section>
-
-      <section id="paper-figures" class="section" aria-labelledby="figures-title">
-        <h2 id="figures-title">Additional Paper Figures</h2>
-        <h3>Held-Out Predictive Validity</h3>
-        <figure class="paper-figure">
-          <a
-            href={`${base}figures/predictive-validity.svg`}
-            aria-label="Open the original predictive validity figure at full resolution"
-          >
-            <img
-              src={`${base}figures/predictive-validity.svg`}
-              alt="Original Figure 3 compares held-out R-squared for single and multi-proxy predictors; CE and margin stay near zero, while first-learning has a larger target-specific value. The shaded near-zero band is specific to this audit."
-              loading="lazy"
-              width="539.163375"
-              height="203.372584"
-            />
-          </a>
-          <figcaption>
-            Held-out predictive validity for the generative proxy set. Error bars are 95% CIs
-            over five splits; Table 23 instead reports standard deviations. The shaded
-            near-zero band is descriptive and specific to this audit.{' '}
-            <span class="figure-mobile-note">
-              Scroll the figure to read its labels, or tap to open the full vector.
-            </span>
-          </figcaption>
-        </figure>
+        <div id="paper-figures" class="predictive-figure">
+          <h3>Held-out predictive validity</h3>
+          <figure class="paper-figure">
+            <a href={`${base}figures/predictive-validity.svg`} aria-label="Open the predictive validity figure at full resolution">
+              <img src={`${base}figures/predictive-validity.svg`} alt="Held-out R-squared for single and multi-proxy predictors. CE and margin are close to zero; first-learning has a larger value." loading="lazy" width="539.163375" height="203.372584" />
+            </a>
+            <figcaption>Prediction from generative proxy scores. Error bars show 95% confidence intervals over held-out splits.</figcaption>
+          </figure>
+        </div>
       </section>
 
       <section id="apply" class="section" aria-labelledby="apply-title">
         <h2 id="apply-title">Apply COHE</h2>
-        <ol class="apply-steps">
-          <li><strong>Specify the claim.</strong> Record the proxy and direction, target, learner,
-            splits, baselines, and intended downstream use.</li>
-          <li><strong>Audit the evidence.</strong> Measure matched dependence and held-out prediction;
-            evaluate the declared operational endpoint. For a new audit, freeze setting-specific
-            thresholds and margins before assigning tiers.</li>
-          <li><strong>Report the scope.</strong> Keep auxiliary-target relations separate from policy
-            benefits. Distinguish an unmeasured gate from a measured failure.</li>
+        <ol class="apply-steps reading-width">
+          <li><strong>Choose the task.</strong> Specify the proxy, target, learner and intended use.</li>
+          <li><strong>Check the evidence.</strong> Compare ranks, predict held-out targets and test the policy against a matched baseline.</li>
+          <li><strong>Report what holds.</strong> State the supported claim and the setting in which it was tested.</li>
         </ol>
-        <p>To verify the released paper statistics from existing seed records, run this in the artifact repository:</p>
+        <p class="reading-width">Verify the released statistics from completed experiment records in the artifact repository:</p>
         <pre><code>python scripts/reproduce.py --experiment paper_results</code></pre>
-        <p class="scope">This CPU command checks supplied results; regenerating scores or retraining models requires upstream inputs and compute.</p>
       </section>
 
       <section id="reproducibility" class="section" aria-labelledby="reproducibility-title">
         <h2 id="reproducibility-title">Reproducibility</h2>
-        <p>
-          Release <a href={release}>v1.0-neurips2026</a> includes audit and recovered experiment code,
-          seven 50,000-entry CIFAR-100 proxy arrays with sample mappings, aggregate and seed-level
-          records, and 234 verified author-trained checkpoints in nine archives.
-        </p>
-        <p>
-          Historical coverage remains partial: DINOv2 selection, ResNet-50 second-learner,
-          and ImageNet-10 endpoint weights were not retained; DDPM ordering releases 18 of 24
-          endpoints. Some calibration and scoring provenance is incomplete. Raw images and
-          third-party pretrained weights must be obtained from their original sources.
-        </p>
+        <p class="reading-width">The <a href={release}>v1.0-neurips2026 release</a> includes code, seven CIFAR-100 proxy arrays, aggregate and seed-level records, and 234 author-trained checkpoints.</p>
+        <div class="table-scroll coverage-table" tabindex="0" role="region" aria-label="Experiment reproduction coverage">
+          <table>
+            <caption>Resources available for each experiment</caption>
+            <thead><tr><th scope="col">Experiment</th><th scope="col">Code</th><th scope="col">Aggregates</th><th scope="col">Seeds</th><th scope="col">Checkpoints</th><th scope="col">Notes</th></tr></thead>
+            <tbody>{coverage.map(row => <tr><th scope="row">{row[0]}</th>{row.slice(1).map(value => <td>{value}</td>)}</tr>)}</tbody>
+          </table>
+        </div>
+        <p class="resource-note reading-width">CPU commands check released records. Regenerating scores and training models require upstream datasets, weights and experiment inputs; some historical source settings remain incomplete.</p>
         <a class="source-link" href={source('docs/REPRODUCIBILITY.md')}>Reproduction guide</a>
+        <a class="source-link secondary-link" href={source('checkpoints/README.md')}>Checkpoint inventory</a>
       </section>
 
-      <section id="scope" class="section" aria-labelledby="scope-title">
+      <aside id="scope" class="section scope-box" aria-labelledby="scope-title">
         <h2 id="scope-title">Scope</h2>
-        <p>
-          Selection and ordering conclusions apply to the tested scores, learners, budgets,
-          and checkpoint protocols. They do not establish outcomes for other curricula,
-          weighting, architectures, or tasks. First-learning and GradNorm signals remain
-          target-specific; scalar-proxy fits do not test all information in a representation.
-        </p>
-        <p>
-          The positive control evaluates retrieval of target-hard samples on ImageNet-1K validation,
-          using a shuffled-ranking null. It does not establish subset-retraining benefit.
-          The R² ≤ 0.005 band is descriptive; no universal pass/fail threshold is supplied.
-        </p>
-      </section>
+        <ul>
+          <li>Selection and ordering results concern the tested scores, learners, budgets and checkpoint rules. Other curricula, weighting methods and tasks were not evaluated.</li>
+          <li>DINOv2's first-learning prediction and selection accuracy use different targets. First-learning and GradNorm signals are target-specific; scalar fits do not measure all information in a representation.</li>
+          <li>The DDPM control does not distinguish harm from score–sample correspondence from the effect of blocked scheduling.</li>
+          <li>The positive control tests retrieval, rather than retraining. The shaded near-zero band is descriptive, not a universal pass/fail threshold; a new audit must specify its criteria.</li>
+        </ul>
+      </aside>
 
       <section id="citation" class="section citation" aria-labelledby="citation-title">
-        <div class="citation-heading">
-          <h2 id="citation-title">Citation</h2>
-          <button type="button" id="copy-bibtex" class="button">
-            Copy BibTeX
-          </button>
-        </div>
+        <div class="citation-heading"><h2 id="citation-title">Citation</h2><button type="button" id="copy-bibtex" class="button">Copy BibTeX</button></div>
         <span id="copy-status" role="status" aria-live="polite"></span>
         <pre><code id="bibtex">{bibtex}</code></pre>
       </section>
     </main>
-    <footer class="site-footer container">
-      <span>Dayena Jeong &amp; Sunglok Choi · NeurIPS 2026</span>
-      <a href={artifact}>Scientific artifact</a>
-    </footer>
+    <footer class="site-footer container"><span>Dayena Jeong and Sunglok Choi</span><a href={artifact}>Scientific artifact</a></footer>
     <script>
+      const menu = document.querySelector<HTMLDetailsElement>('#mobile-navigation');
+      menu?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+      menu?.addEventListener('keydown', event => {
+        if (event.key === 'Escape') { menu.open = false; menu.querySelector('summary')?.focus(); }
+      });
       const button = document.querySelector<HTMLButtonElement>('#copy-bibtex');
       button?.addEventListener('click', async () => {
         const text = document.querySelector('#bibtex')?.textContent ?? '';
@@ -395,8 +270,7 @@ const socialImage = canonical ? new URL('og-image.png', canonical).href : `${bas
           const range = document.createRange();
           range.selectNodeContents(document.querySelector('#bibtex')!);
           const selection = window.getSelection();
-          selection?.removeAllRanges();
-          selection?.addRange(range);
+          selection?.removeAllRanges(); selection?.addRange(range);
           if (status) status.textContent = 'Select and copy the highlighted citation.';
         }
       });

@@ -7,7 +7,7 @@ Verified 2026-10-08. The website is separate from the frozen scientific reposito
 - Camera-ready: `NeurIPS/paper/neurips_2026.tex` and its compiled PDF; `appendix.tex`, `appendix_operational_extensions.tex`, `appendix_reproduction_coverage.tex`, and `experiment_map.tex`. The source uses `eandd,final` and identifies Dayena Jeong and Sunglok Choi at Seoul National University of Science and Technology. Department affiliations on the page are transcribed from its author block.
 - Public artifact: https://github.com/DayenaJeong/cohe-artifact at commit `54c201bb79800cedcfd4842b8f5fbc652555da3e`. Its current README explicitly distinguishes documentation-only main-branch corrections from the fixed scientific release `v1.0-neurips2026`.
 - Required docs inspected: `README.md`, `docs/REPRODUCIBILITY.md`, `docs/REPRODUCTION_MATRIX.md`, `docs/CLAIM_TIER_GUIDE.md`, and `results/SOURCE_OF_TRUTH.csv`.
-- Official conference record: https://neurips.cc/virtual/2026/poster/139659, verified by HTTP 200, matching title and authors. The page retains this record as a separate link. The Paper PDF action now serves `public/paper.pdf`, an identical local copy of the revised author PDF. No DOI or arXiv identifier was added. These changes have not been deployed.
+- Official conference record: https://neurips.cc/virtual/2026/poster/139659, verified by HTTP 200, matching title and authors. The page retains this record as a separate link. The Paper PDF action serves `public/paper.pdf`, an identical local copy of the revised author PDF. No DOI or arXiv identifier was added. GitHub Pages publication targets `https://mint-lab.github.io/cohe/`.
 - The final abstract is extracted verbatim from the camera-ready source, with LaTeX markup converted to readable Unicode. Its meaning and every number are preserved. The conference landing page has an older abstract, so it is not used for the abstract transcription.
 
 ## Data derivation
@@ -29,16 +29,15 @@ Verified 2026-10-08. The website is separate from the frozen scientific reposito
 
 ## Claim-tier terminology and precedence
 
-The manuscript appendix claim-tier table is authoritative. Six tiers are Validated surrogate, Predictive validity only, Target-specific relation, Operational-only effect, Weak evidence, and No reliable transfer. An unmeasured gate is not a failure. Matched positive relational evidence survives failed/unavailable Gate 3. Auxiliary-target-only relations specialize to Target-specific relation. The interactive component teaches evidence levels and does not compute a tier or invent thresholds. DINOv2 and positive-control interpretations preserve these rules.
+The manuscript appendix claim-tier table is authoritative. Six tiers are Validated surrogate, Predictive validity only, Target-specific relation, Operational-only effect, Weak evidence, and No reliable transfer. An unmeasured gate is not a failure. Matched positive relational evidence survives failed/unavailable Gate 3. Auxiliary-target-only relations specialize to Target-specific relation. The three step cards teach evidence levels and do not compute a tier or invent thresholds. DINOv2 and positive-control interpretations preserve these rules.
 
 ## Figures
 
-- Hero inference-gap diagram: original semantic HTML/CSS conceptual illustration, explicitly labeled not experimental data. The ≠ signs distinguish questions, not measured inequalities.
-- Interactive diagrams: original evaluation-process illustrations with actual DINOv2 numerical examples. No synthetic point cloud, hypothetical threshold, or invented score.
+- Hero metric strip and gate step cards: actual DINOv2 results read directly from `src/data/results.ts`. First-learning dependence and prediction are labeled separately from the selection endpoint. No hypothetical threshold or invented score.
 - DINOv2/DDPM plots: adapted web SVG forest plots calculated from the final released seed records. Axes are Top-1 differences in percentage points; zero is the matched baseline, and whiskers are paired 95% Student-t CIs. Direct numeric labels remain available at mobile widths and to screen readers.
 - ImageNet bars: adapted web display calculated from seed-level best-checkpoint means; zero-based 0–70% accuracy scale. The separate annotation is the paired difference CI.
 - `public/figures/cohe-protocol.svg`: exact vector conversion by `pdftocairo -svg` of camera-ready `figures/fig1_cohe_protocol_v4.pdf`, without altering labels, axis meanings, or interpretation.
-- `public/figures/predictive-validity.svg`: exact vector conversion of camera-ready `figures/fig3_predictive_validity.pdf`, disclosed as original Figure 3. Local near-zero band remains explicitly audit-specific. The full-resolution vector opens through its enclosing link.
+- `public/figures/predictive-validity.svg`: exact vector conversion of camera-ready `figures/fig3_predictive_validity.pdf`. The near-zero band is described as a descriptive band in the Scope box. The full-resolution vector opens through its enclosing link.
 - Other final figures, their generating scripts, and figure inventory were inspected. Figure 4 and density/heatmap panels are not duplicated because the three final operational case studies carry the page's central story.
 
 ## Citation and public assets

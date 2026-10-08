@@ -5,13 +5,14 @@
     <text x="80" y="184" font-size="52" font-weight="600">When does a sample difficulty</text>
     <text x="80" y="252" font-size="52" font-weight="600">proxy actually help?</text>
     <text x="80" y="322" font-size="26">COHE · Cross-Objective Hardness Evaluation</text>
-    <path d="M80 376 H1120" stroke="#e5e7eb"/>
-    <text x="80" y="434" font-size="25">1  Dependence</text>
-    <text x="433" y="434" font-size="25">2  Prediction</text>
-    <text x="785" y="434" font-size="25">3  Transfer</text>
-    <text x="80" y="480" font-size="20" fill="#666666">Rank alignment</text>
-    <text x="433" y="480" font-size="20" fill="#666666">Held-out validity</text>
-    <text x="785" y="480" font-size="20" fill="#666666">Operational benefit</text>
-    <text x="80" y="570" font-size="22" fill="#666666">Dayena Jeong · Sunglok Choi</text>
+    <g fill="white" stroke="#dce0e5"><rect x="80" y="380" width="324" height="125"/><rect x="438" y="380" width="324" height="125"/><rect x="796" y="380" width="324" height="125"/></g>
+    <path d="M412 442 H430 M423 437 L430 442 L423 447 M770 442 H788 M781 437 L788 442 L781 447" stroke="#365b7d" stroke-width="2" fill="none"/>
+    <text x="104" y="428" font-size="25">G1  Dependence</text>
+    <text x="462" y="428" font-size="25">G2  Prediction</text>
+    <text x="820" y="428" font-size="25">G3  Transfer</text>
+    <text x="104" y="474" font-size="20" fill="#595f66">Do the rankings agree?</text>
+    <text x="462" y="474" font-size="20" fill="#595f66">Can it predict?</text>
+    <text x="820" y="474" font-size="20" fill="#595f66">Does using it help?</text>
+    <text x="80" y="570" font-size="22" fill="#666666">Dayena Jeong and Sunglok Choi</text>
   </g>
 </svg>
