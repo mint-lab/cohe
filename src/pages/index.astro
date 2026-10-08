@@ -78,15 +78,9 @@ const coverage = [
           <p><sup>2</sup> Department of Computer Science and Engineering</p>
         </details>
         <p class="hero-summary">
-          DINOv2 predicts first-learning (ρ = {number(results.firstLearning.rho, 2)}), yet
-          hard-sample selection returns {number(results.dino[0].delta, 1)} pp versus Random
-          at {results.dino[0].label.replace(' subset', '')}.
+          <strong>TL;DR:</strong> DINOv2 isolation predicts when samples are first learned,
+          yet training on its hardest-ranked samples reduces accuracy in the tested settings.
         </p>
-        <div class="hero-metrics" aria-label="DINOv2 evidence at three levels">
-          <div><span>G1 — Dependence</span><strong>ρ = {number(results.firstLearning.rho, 4)}</strong><small>First-learning ranks</small></div>
-          <div><span>G2 — Prediction</span><strong>R² = {number(results.firstLearning.r2, 4)}</strong><small>Held-out first-learning</small></div>
-          <div><span>G3 — Selection</span><strong>{number(results.dino[0].delta)} <small>pp</small></strong><small>{results.dino[0].label.replace(' subset', '')} subset, test Top-1</small></div>
-        </div>
         <nav class="hero-actions" aria-label="Paper resources">
           <a class="button" href={`${base}paper.pdf`}>Paper</a>
           <a class="button" href={artifact}>Code</a>
@@ -103,10 +97,7 @@ const coverage = [
           Tests on vision benchmarks show that these forms of evidence can lead to different
           conclusions. The released code and results make each check inspectable.
         </p>
-        <details class="abstract-details">
-          <summary>Read the full abstract</summary>
-          <p class="abstract reading-width">{results.abstract}</p>
-        </details>
+        <a class="source-link" href={`${base}paper.pdf#page=1`}>Read the full abstract in the paper</a>
       </section>
 
       <Gates />
@@ -115,11 +106,21 @@ const coverage = [
         <span id="findings" class="anchor-alias" aria-hidden="true"></span>
         <h2 id="results-title">Experimental results</h2>
         <p class="reading-width">Selection, ordering and retrieval test different uses of a difficulty score.</p>
+        <p id="effect-plot-note" class="chart-note reading-width">
+          In the DINOv2 and DDPM difference plots, negative values favor the baseline.
+          Whiskers are paired Student-t 95% confidence intervals.
+        </p>
         <article class="case-study">
           <div class="case-copy">
             <h3>DINOv2 hard-sample selection</h3>
             <p class="experiment-label">CIFAR-100, DINOv2 isolation</p>
             <p>Hard-only selection underperforms Random in every tested condition.</p>
+            <p>
+              For first-learning, rank correlation is ρ = {number(results.firstLearning.rho, 4)}
+              and held-out prediction is R² = {number(results.firstLearning.r2, 4)}.
+              This auxiliary-target relation measures when samples are learned; the selection
+              experiment below measures test accuracy.
+            </p>
             <p class="experiment-meta">
               ResNet-18, {results.dino.length} conditions with {results.dino[0].n} paired seeds
               each. Seed IDs are reused across conditions. Balanced selection uses balanced Random.
@@ -210,19 +211,55 @@ const coverage = [
       </section>
 
       <section id="apply" class="section" aria-labelledby="apply-title">
-        <h2 id="apply-title">Apply COHE</h2>
-        <ol class="apply-steps reading-width">
-          <li><strong>Choose the task.</strong> Specify the proxy, target, learner and intended use.</li>
-          <li><strong>Check the evidence.</strong> Compare ranks, predict held-out targets and test the policy against a matched baseline.</li>
-          <li><strong>Report what holds.</strong> State the supported claim and the setting in which it was tested.</li>
-        </ol>
-        <p class="reading-width">Verify the released statistics from completed experiment records in the artifact repository:</p>
-        <pre><code>python scripts/reproduce.py --experiment paper_results</code></pre>
+        <h2 id="apply-title">Run COHE on your CSVs</h2>
+        <p class="reading-width">
+          From the artifact repository root, provide your scalar scores, a fixed prediction
+          split and completed policy results. Match scores by unique <code>sample_id</code>;
+          the scripts use the IDs shared by the input files. Define both scores so larger
+          values mean harder samples, and record the target, learner and policy being audited.
+        </p>
+        <div class="table-scroll input-table" tabindex="0" role="region" aria-label="COHE CSV input formats">
+          <table>
+            <caption>CSV files for the commands below</caption>
+            <thead><tr><th scope="col">File</th><th scope="col">Columns</th><th scope="col">Contents</th></tr></thead>
+            <tbody>
+              <tr><th scope="row"><code>my_proxy.csv</code></th><td><code>sample_id,proxy_score</code></td><td>One scalar proxy score per sample.</td></tr>
+              <tr><th scope="row"><code>my_target.csv</code></th><td><code>sample_id,target_score</code></td><td>One scalar value of the declared target per sample.</td></tr>
+              <tr><th scope="row"><code>my_splits.csv</code></th><td><code>sample_id,split</code></td><td>Fixed <code>train</code> or <code>test</code> assignment; at least two training samples and a nonconstant held-out target.</td></tr>
+              <tr><th scope="row"><code>my_transfer.csv</code></th><td><code>method,budget,seed,accuracy</code></td><td>Completed runs, with a <code>Random</code> baseline at each budget and accuracy in the same units for every method.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <pre class="audit-commands" tabindex="0" role="region" aria-label="Commands for auditing your CSVs"><code>{`# G1: Pearson r and Spearman rho
+python scripts/run_stage1_dependence.py \\
+  --proxy my_proxy.csv --target my_target.csv \\
+  --out outputs/my_g1.csv
+
+# G2: held-out R² from a one-dimensional linear fit
+python scripts/run_stage2_prediction.py \\
+  --proxy my_proxy.csv --target my_target.csv \\
+  --splits my_splits.csv --out outputs/my_g2.csv
+
+# G3: mean accuracy and differences versus Random
+python scripts/run_stage3_transfer_summary.py \\
+  --transfer my_transfer.csv --out outputs/my_g3.csv`}</code></pre>
+        <p class="resource-note reading-width">
+          These commands compute summaries: G2 uses a single linear model; G3 averages
+          supplied runs by method and budget, without pairing seeds or estimating confidence
+          intervals. For a full audit, report split variability and endpoint uncertainty,
+          declare pass criteria and assign a reporting outcome using the definitions above.
+        </p>
+        <a class="source-link" href={`${artifact}/tree/${results.artifactCommit}/examples`}>Runnable example CSVs</a>
+        <a class="source-link secondary-link" href={source('docs/CLAIM_TIER_GUIDE.md')}>Reporting guide</a>
       </section>
 
       <section id="reproducibility" class="section" aria-labelledby="reproducibility-title">
         <h2 id="reproducibility-title">Reproducibility</h2>
         <p class="reading-width">The <a href={release}>v1.0-neurips2026 release</a> includes code, seven CIFAR-100 proxy arrays, aggregate and seed-level records, and 234 author-trained checkpoints.</p>
+        <h3 class="reproduce-title">Reproduce the paper</h3>
+        <p class="reading-width">From the artifact repository root, verify all released DINOv2 conditions, DDPM ordering pairs and ImageNet-1K endpoints against completed experiment records:</p>
+        <pre class="reproduce-command"><code>python scripts/reproduce.py --experiment paper_results</code></pre>
+        <a class="source-link" href={source('scripts/reproduce.py')}>Result verification script</a>
         <div class="table-scroll coverage-table" tabindex="0" role="region" aria-label="Experiment reproduction coverage">
           <table>
             <caption>Resources available for each experiment</caption>

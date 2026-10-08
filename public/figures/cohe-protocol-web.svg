@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1110" height="240" viewBox="0 0 1110 240" role="img" aria-labelledby="title description">
+  <title id="title">COHE audit flow and six reporting outcomes</title>
+  <desc id="description">An audit setting specifies a proxy, target and protocol. Gate 1 measures dependence, Gate 2 measures held-out prediction, and Gate 3 measures operational transfer. The evidence supports one of six reporting outcomes, with definitions and precedence in the paper.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="#595f66"/></marker>
+  </defs>
+  <g fill="white" stroke="#b9c0c8" stroke-width="1.5">
+    <rect x="5" y="5" width="200" height="230" rx="5"/>
+    <rect x="230" y="5" width="200" height="230" rx="5"/>
+    <rect x="455" y="5" width="200" height="230" rx="5"/>
+    <rect x="680" y="5" width="200" height="230" rx="5"/>
+    <rect x="905" y="5" width="200" height="230" rx="5"/>
+  </g>
+  <g stroke="#595f66" stroke-width="1.5" marker-end="url(#arrow)">
+    <path d="M205 120H227"/><path d="M430 120H452"/><path d="M655 120H677"/><path d="M880 120H902"/>
+  </g>
+  <g font-family="Arial, sans-serif" fill="#222">
+    <g font-size="17" font-weight="bold">
+      <text x="19" y="34">Audit setting</text>
+      <text x="244" y="34" fill="#365b7d">G1: Dependence</text>
+      <text x="469" y="34" fill="#365b7d">G2: Prediction</text>
+      <text x="694" y="34" fill="#365b7d">G3: Transfer</text>
+      <text x="919" y="34">Reporting outcome</text>
+    </g>
+    <g font-size="14">
+      <text x="19" y="86">Proxy</text><text x="19" y="112">Target</text><text x="19" y="138">Protocol</text>
+      <text x="244" y="86">Pearson r · Spearman ρ</text>
+      <text x="244" y="112">Matched sample IDs</text>
+      <text x="244" y="181" fill="#595f66">Rank alignment</text>
+      <text x="469" y="86">Held-out R²</text>
+      <text x="469" y="112">Splits and uncertainty</text>
+      <text x="469" y="181" fill="#595f66">Predictive validity</text>
+      <text x="694" y="86">Metric versus baseline</text>
+      <text x="694" y="112">Endpoint uncertainty</text>
+      <text x="694" y="181" fill="#595f66">Benefit for the protocol</text>
+      <text x="919" y="73">Validated surrogate</text>
+      <text x="919" y="99">Predictive validity only</text>
+      <text x="919" y="125">Target-specific relation</text>
+      <text x="919" y="151">Operational-only effect</text>
+      <text x="919" y="177">Weak evidence</text>
+      <text x="919" y="203">No reliable transfer</text>
+    </g>
+  </g>
+</svg>

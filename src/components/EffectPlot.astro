@@ -12,7 +12,7 @@ const { rows, min, max, ticks, digits = 2, label } = Astro.props;
 const x = (v: number) => 14 + ((v - min) / (max - min)) * 372;
 ---
 
-<figure class="effect-plot" aria-label={label}>
+<figure class="effect-plot" aria-label={label} aria-describedby="effect-plot-note">
   <div class="plot-key">
     <span>Mean difference with 95% paired CI</span>
     <span>Top-1, percentage points</span>
@@ -61,7 +61,4 @@ const x = (v: number) => 14 + ((v - min) / (max - min)) * 372;
     </svg>
     <div></div>
   </div>
-  <figcaption>
-    Negative values favor the baseline. Whiskers are paired Student-t 95% confidence intervals.
-  </figcaption>
 </figure>

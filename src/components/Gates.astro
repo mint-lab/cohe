@@ -1,11 +1,19 @@
 ---
-import { results, number } from '../data/results';
+import { source } from '../data/results';
 const gates = [
-  { name: 'Dependence', question: 'Do the rankings agree?', explanation: 'Compare the proxy with the target on matched samples.', value: `ρ = ${number(results.firstLearning.rho, 4)}`, target: 'DINOv2, first-learning', boundary: 'Agreement alone does not establish prediction.' },
-  { name: 'Prediction', question: 'Can it predict unseen samples?', explanation: 'Fit on one split and evaluate held-out target values.', value: `R² = ${number(results.firstLearning.r2, 4)}`, target: 'DINOv2, first-learning', boundary: 'Prediction alone does not show better selection.' },
-  { name: 'Transfer', question: 'Does using the score help?', explanation: 'Test the policy against a matched baseline.', value: `${number(results.dino[0].delta)} pp`, target: `DINOv2, ${results.dino[0].label.replace(' subset', '')} selection`, boundary: 'A policy effect does not validate other uses of the proxy.' },
+  { name: 'Dependence', question: 'Do the rankings agree?', explanation: 'Compare the proxy with the target on matched samples using Pearson r and Spearman ρ.' },
+  { name: 'Prediction', question: 'Can it predict unseen samples?', explanation: 'Fit on the training split and measure R² on held-out target values.' },
+  { name: 'Transfer', question: 'Does using the score help?', explanation: 'Compare the declared policy with a matched baseline, including uncertainty in the downstream metric.' },
 ];
-const flow = `${import.meta.env.BASE_URL}figures/cohe-protocol.svg`;
+const tiers = [
+  ['Validated surrogate', 'All three gates pass for the stated target and protocol.'],
+  ['Predictive validity only', 'G1 and G2 pass for the target, without a G3 pass.'],
+  ['Target-specific relation', 'Relational evidence is confined to an auxiliary target, such as first-learning or GradNorm.'],
+  ['Operational-only effect', 'G3 passes without both G1 and G2 passing for the same setting.'],
+  ['Weak evidence', 'Support is incomplete or inconclusive, including agreement at G1 alone.'],
+  ['No reliable transfer', 'G2 is measured weak or G3 has no reliable benefit, without matched positive G1 and G2 evidence.'],
+];
+const flow = `${import.meta.env.BASE_URL}figures/cohe-protocol-web.svg`;
 ---
 
 <section id="framework" class="section framework" aria-labelledby="framework-title">
@@ -18,16 +26,27 @@ const flow = `${import.meta.env.BASE_URL}figures/cohe-protocol.svg`;
           <span class="gate-label">G{i + 1} — {gate.name}</span>
           <h3>{gate.question}</h3>
           <p>{gate.explanation}</p>
-          <p class="gate-result"><strong>{gate.value}</strong><small>{gate.target}</small></p>
-          <p class="gate-boundary">{gate.boundary}</p>
         </article>
       </li>
     ))}
   </ol>
+  <p class="evidence-note reading-width">
+    The paper calls this <strong>non-transitivity</strong>: ranking agreement, held-out
+    prediction and downstream benefit do not automatically imply one another.
+  </p>
   <figure class="paper-figure protocol-figure">
     <a href={flow} aria-label="Open the COHE audit flow at full resolution">
-      <img src={flow} alt="COHE follows a proxy, target and protocol through dependence, held-out prediction and operational transfer, then reports a claim tier." loading="lazy" width="905.54" height="133.55" />
+      <img src={flow} alt="COHE checks a proxy, target and protocol for dependence, held-out prediction and operational transfer, then reports one of the six outcomes defined below." loading="lazy" width="1110" height="240" />
     </a>
-    <figcaption><a href={flow}>View the audit flow</a></figcaption>
+    <figcaption>Audit flow with the paper’s six reporting outcomes. <a href={flow}>View at full size</a></figcaption>
   </figure>
+  <div class="tier-legend" aria-labelledby="tiers-title">
+    <h3 id="tiers-title">Six reporting outcomes</h3>
+    <p class="reading-width">The paper groups audit reports into six tiers for the stated proxy, target and protocol.</p>
+    <dl>
+      {tiers.map(([name, meaning]) => <div><dt>{name}</dt><dd>{meaning}</dd></div>)}
+    </dl>
+    <p class="reading-width">An unmeasured gate is not a failure. A failed G3 preserves positive G1/G2 evidence; auxiliary-target relations retain their own label.</p>
+    <a class="source-link" href={source('docs/CLAIM_TIER_GUIDE.md')}>Definitions and assignment order</a>
+  </div>
 </section>

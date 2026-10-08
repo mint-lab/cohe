@@ -8,7 +8,7 @@ Verified 2026-10-08. The website is separate from the frozen scientific reposito
 - Public artifact: https://github.com/DayenaJeong/cohe-artifact at commit `54c201bb79800cedcfd4842b8f5fbc652555da3e`. Its current README explicitly distinguishes documentation-only main-branch corrections from the fixed scientific release `v1.0-neurips2026`.
 - Required docs inspected: `README.md`, `docs/REPRODUCIBILITY.md`, `docs/REPRODUCTION_MATRIX.md`, `docs/CLAIM_TIER_GUIDE.md`, and `results/SOURCE_OF_TRUTH.csv`.
 - Official conference record: https://neurips.cc/virtual/2026/poster/139659, verified by HTTP 200, matching title and authors. The page retains this record as a separate link. The Paper PDF action serves `public/paper.pdf`, an identical local copy of the revised author PDF. No DOI or arXiv identifier was added. GitHub Pages publication targets `https://mint-lab.github.io/cohe/`.
-- The final abstract is extracted verbatim from the camera-ready source, with LaTeX markup converted to readable Unicode. Its meaning and every number are preserved. The conference landing page has an older abstract, so it is not used for the abstract transcription.
+- The final abstract is extracted verbatim into the scientific data record, with LaTeX markup converted to readable Unicode. The homepage now presents a short study overview and links to the full abstract in the unchanged paper PDF, avoiding repeated numerical results and unexplained terminology. The conference landing page has an older abstract, so it is not used for the abstract transcription.
 
 ## Data derivation
 
@@ -29,14 +29,28 @@ Verified 2026-10-08. The website is separate from the frozen scientific reposito
 
 ## Claim-tier terminology and precedence
 
-The manuscript appendix claim-tier table is authoritative. Six tiers are Validated surrogate, Predictive validity only, Target-specific relation, Operational-only effect, Weak evidence, and No reliable transfer. An unmeasured gate is not a failure. Matched positive relational evidence survives failed/unavailable Gate 3. Auxiliary-target-only relations specialize to Target-specific relation. The three step cards teach evidence levels and do not compute a tier or invent thresholds. DINOv2 and positive-control interpretations preserve these rules.
+The manuscript appendix claim-tier table is authoritative. Six tiers are Validated surrogate, Predictive validity only, Target-specific relation, Operational-only effect, Weak evidence, and No reliable transfer. The framework section now lists all six names and one-line meanings, with a commit-pinned link to `docs/CLAIM_TIER_GUIDE.md` for precedence. An unmeasured gate is not a failure. Matched positive relational evidence survives failed/unavailable Gate 3. Auxiliary-target-only relations specialize to Target-specific relation. The three step cards teach evidence levels and do not compute a tier or invent thresholds. DINOv2 and positive-control interpretations preserve these rules.
+
+The plain-language definition of non-transitivity follows the final manuscript introduction: rank alignment, held-out predictive validity, and operational benefit do not automatically imply one another. The paper title and PDF are unchanged.
+
+## Executable examples
+
+All four displayed script files were fetched from the pinned artifact revision and checked byte-for-byte against the local public-release checkout before execution. The CSV examples use the public interface, rather than the different flags and split format in the older local `cohe-artifact` checkout:
+
+- G1: `scripts/run_stage1_dependence.py --proxy ... --target ... --out ...`; inputs have `sample_id,proxy_score` and `sample_id,target_score`. Outputs Pearson r and Spearman rho on shared IDs.
+- G2: `scripts/run_stage2_prediction.py --proxy ... --target ... --splits ... --out ...`; the split CSV has `sample_id,split` with `train`/`test` assignments. This is one-dimensional linear prediction, not the paper's full nonlinear predictive suite.
+- G3: `scripts/run_stage3_transfer_summary.py --transfer ... --out ...`; example input has `method,budget,seed,accuracy`, including a case-sensitive `Random` baseline per budget. The script computes group means and differences, without seed pairing or confidence intervals. The website states this limitation and the additional uncertainty/criteria required for a full audit.
+- Paper verification: `scripts/reproduce.py --experiment paper_results` checks completed DINOv2, DDPM and ImageNet-1K statistics; it does not train models. This command is under “Reproduce the paper” in Reproducibility, separate from applying COHE to user inputs.
+
+Neither the scalar interface commands nor the claim-card generator is presented as implementing the complete final six-tier assignment protocol.
 
 ## Figures
 
-- Hero metric strip and gate step cards: actual DINOv2 results read directly from `src/data/results.ts`. First-learning dependence and prediction are labeled separately from the selection endpoint. No hypothetical threshold or invented score.
-- DINOv2/DDPM plots: adapted web SVG forest plots calculated from the final released seed records. Axes are Top-1 differences in percentage points; zero is the matched baseline, and whiskers are paired 95% Student-t CIs. Direct numeric labels remain available at mobile widths and to screen readers.
+- Hero: qualitative TL;DR. Gate cards: definitions of the three evidence checks. DINOv2 dependence and prediction appear once in its results text, separately labeled from the selection endpoint; selection deltas appear in the result chart. All values still come from the unchanged `src/data/results.ts` records.
+- DINOv2/DDPM plots: adapted web SVG forest plots calculated from the final released seed records. Axes are Top-1 differences in percentage points; zero is the matched baseline, and whiskers are paired 95% Student-t CIs. One shared note explains both plots, linked from each figure with `aria-describedby`. Direct numeric labels remain available at mobile widths and to screen readers.
 - ImageNet bars: adapted web display calculated from seed-level best-checkpoint means; zero-based 0–70% accuracy scale. The separate annotation is the paired difference CI.
 - `public/figures/cohe-protocol.svg`: exact vector conversion by `pdftocairo -svg` of camera-ready `figures/fig1_cohe_protocol_v4.pdf`, without altering labels, axis meanings, or interpretation.
+- The homepage now uses `public/figures/cohe-protocol-web.svg`, a web diagram of the same three checks with all six final canonical reporting outcomes. The earlier paper figure lists five names; the web diagram follows the final manuscript tier table and `docs/CLAIM_TIER_GUIDE.md`. The original figure asset and paper PDF remain unchanged. The six-name legend below the web diagram supplies meanings and a link to precedence.
 - `public/figures/predictive-validity.svg`: exact vector conversion of camera-ready `figures/fig3_predictive_validity.pdf`. The near-zero band is described as a descriptive band in the Scope box. The full-resolution vector opens through its enclosing link.
 - Other final figures, their generating scripts, and figure inventory were inspected. Figure 4 and density/heatmap panels are not duplicated because the three final operational case studies carry the page's central story.
 

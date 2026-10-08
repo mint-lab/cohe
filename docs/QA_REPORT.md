@@ -1,5 +1,17 @@
 # Website validation
 
+## CSV examples, reporting outcomes and copy revision
+
+The current revision separates “Run COHE on your CSVs” from “Reproduce the paper,” adds the four input schemas and verified G1/G2/G3 command examples, explains all six final reporting outcomes, and defines non-transitivity from the manuscript introduction. The hero now has a qualitative TL;DR. DINOv2 dependence and prediction appear once in the results text, and its selection deltas appear in the results chart. The full abstract is linked in the unchanged PDF. The two difference plots share one accessible interpretation note.
+
+The original protocol figure displays five outcome names, so the homepage uses a new web SVG listing all six names from the final manuscript and artifact guide. The original paper figure files, paper PDF, numerical records, seed coverage and plot geometry are unchanged. The CSV schema table and code block scroll within their own containers on mobile.
+
+Final `npm run check` and `npm run build` pass with the existing Node 22.23.3 runtime. Production-browser checks at 1280 and 375 px verify no document overflow, zero WCAG 2 A/AA and 2.1 AA axe violations, loaded figures, citation copying, mobile navigation, unchanged chart values and a JavaScript-disabled mobile visit. All three commands copied from the rendered page execute successfully against the artifact's existing toy inputs; the displayed `paper_results` command also passes against completed released records. No scoring or training is launched. Reports, screenshots, copied interface scripts and generated toy summaries are retained in ignored `qa/content-revision/`.
+
+The scripts were checked byte-for-byte against artifact revision `54c201bb79800cedcfd4842b8f5fbc652555da3e`. G2 is a one-dimensional linear interface; G3 summarizes supplied mean accuracies without paired inference or confidence intervals. The page describes these limits and the additional criteria/uncertainty required before assigning a final reporting outcome.
+
+Retained attempts: the initial build check used host-default Node 18 and stopped at Astro's minimum-version check; checks then used the existing compatible runtime. The first browser assertion mistakenly treated the digit in “DINOv2” as a numerical result; its failure report is preserved in `qa/content-revision/report-initial-failure.json`, and the assertion was narrowed to numerical results. After the code block became horizontally scrollable, axe found missing keyboard access; the block now has a tab stop and a named region, and `qa/content-revision/report-scroll-accessibility-failure.json` retains that finding. The paper-statistic command passes but emits a host NumPy/SciPy version-compatibility warning, retained in the final report; no dependency versions were changed. Earlier sections below describe previous revisions and deployments. This revision is a local commit; it has not been pushed or deployed.
+
 ## Homepage polish, 375 px and 1280 px
 
 The current revision adds a fixed four-link navigation with a native mobile menu, a question-led hero with data-backed metrics, three always-visible gate steps, a collapsed full abstract, a consolidated four-point Scope box, and a reproduction-coverage table checked against the artifact documentation. The updated social preview is 1200×630. Whisker plot geometry and every `src/data/` file are preserved.
