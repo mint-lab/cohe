@@ -1,5 +1,13 @@
 # Website validation
 
+## G3 summary boundary and prose correction
+
+The current revision labels the CSV transfer command “G3 summary only, no pass/fail,” names its output `my_g3_summary.csv`, and states that the interface outputs do not decide gate passes or assign tiers. The page explains the separate seed-paired CI requirement for the paper's accuracy comparisons and adds the final manual outcome-assignment order from the pinned reporting guide. No new automatic gate or tier classifier is claimed, and the scientific artifact scripts are unchanged.
+
+The DDPM Scope sentence now separates score–sample correspondence from blocked scheduling in plain language. The study overview names the evaluated score types and policy experiments; the framework heading names the three measurements. The five flagged generic sentences/headings are removed without repeating the experimental numerical values.
+
+`npm run check` and `npm run build` pass. The existing browser harness verifies 1280/375 px layouts, zero accessibility violations, navigation, figure loading, unchanged chart values, citation copying and no-JavaScript access. All four displayed commands run successfully against the existing artifact examples and completed paper records. Evidence for this revision is retained separately in ignored `qa/g3-summary-revision/`; prior reports and failure evidence are retained. The host NumPy/SciPy compatibility warning remains recorded with the successful result verification. The source records, original figures, paper PDF and locked scientific configurations are unchanged. The following sections describe earlier revisions.
+
 ## CSV examples, reporting outcomes and copy revision
 
 The current revision separates “Run COHE on your CSVs” from “Reproduce the paper,” adds the four input schemas and verified G1/G2/G3 command examples, explains all six final reporting outcomes, and defines non-transitivity from the manuscript introduction. The hero now has a qualitative TL;DR. DINOv2 dependence and prediction appear once in the results text, and its selection deltas appear in the results chart. The full abstract is linked in the unchanged PDF. The two difference plots share one accessible interpretation note.

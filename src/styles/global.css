@@ -131,6 +131,9 @@ th { font-weight: 600; }
 .input-table th, .input-table td { text-align: left; vertical-align: top; }
 .input-table td:nth-child(2) { white-space: nowrap; }
 .reproduce-title { margin-top: 24px; }
+.reporting-step { margin-top: 28px; }
+.reporting-rules { padding-left: 24px; }
+.reporting-rules li + li { margin-top: 12px; }
 .resource-note { margin-top: 18px; color: var(--muted); }
 .scope-box { padding: 28px 30px; background: var(--wash); border-left: 2px solid var(--rule); }
 .scope-box h2 { font-size: 23px; }

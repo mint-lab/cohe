@@ -42,7 +42,9 @@ All four displayed script files were fetched from the pinned artifact revision a
 - G3: `scripts/run_stage3_transfer_summary.py --transfer ... --out ...`; example input has `method,budget,seed,accuracy`, including a case-sensitive `Random` baseline per budget. The script computes group means and differences, without seed pairing or confidence intervals. The website states this limitation and the additional uncertainty/criteria required for a full audit.
 - Paper verification: `scripts/reproduce.py --experiment paper_results` checks completed DINOv2, DDPM and ImageNet-1K statistics; it does not train models. This command is under “Reproduce the paper” in Reproducibility, separate from applying COHE to user inputs.
 
-Neither the scalar interface commands nor the claim-card generator is presented as implementing the complete final six-tier assignment protocol.
+The G3 command and its adjacent explanation explicitly say “G3 summary only, no pass/fail.” Its output is named `my_g3_summary.csv`. For the paper's seed-paired accuracy comparisons, a G3 pass requires a paired-difference CI lower bound above zero together with the declared endpoint and protocol checks; this summary script cannot establish that pass. G2's single linear fit also does not supply the uncertainty and full declared criteria for a gate decision.
+
+The “Assign the reporting outcome” section supplies the final manual step after uncertainty and predeclared criteria have been evaluated. It follows the final guide's precedence: all-gate validation; operational-only effect; auxiliary-target relation or positive G1/G2 predictive validity; no reliable transfer when applicable; remaining weak evidence. Unmeasured gates remain distinct from failed gates. Neither the scalar interface commands nor the claim-card generator is presented as implementing the complete final six-tier assignment protocol.
 
 ## Figures
 

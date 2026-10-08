@@ -92,10 +92,10 @@ const coverage = [
       <section id="abstract" class="section overview" aria-labelledby="abstract-title">
         <h2 id="abstract-title">The study</h2>
         <p class="reading-width">
-          Difficulty depends on what a model is asked to do. COHE separates agreement with a
-          target, prediction on unseen samples, and the benefit of using a score in practice.
-          Tests on vision benchmarks show that these forms of evidence can lead to different
-          conclusions. The released code and results make each check inspectable.
+          COHE compares reconstruction error, denoising error, token likelihood and DINOv2
+          isolation with supervised difficulty targets. Experiments measure rank agreement
+          and held-out prediction, then test subset selection, full-data sample ordering
+          and retrieval against matched baselines.
         </p>
         <a class="source-link" href={`${base}paper.pdf#page=1`}>Read the full abstract in the paper</a>
       </section>
@@ -214,7 +214,9 @@ const coverage = [
         <h2 id="apply-title">Run COHE on your CSVs</h2>
         <p class="reading-width">
           From the artifact repository root, provide your scalar scores, a fixed prediction
-          split and completed policy results. Match scores by unique <code>sample_id</code>;
+          split and completed policy results. These interface commands produce statistics;
+          they do not decide whether a gate passes or assign a reporting tier.
+          Match scores by unique <code>sample_id</code>;
           the scripts use the IDs shared by the input files. Define both scores so larger
           values mean harder samples, and record the target, learner and policy being audited.
         </p>
@@ -240,15 +242,36 @@ python scripts/run_stage2_prediction.py \\
   --proxy my_proxy.csv --target my_target.csv \\
   --splits my_splits.csv --out outputs/my_g2.csv
 
-# G3: mean accuracy and differences versus Random
+# G3 summary only, no pass/fail: mean differences versus Random
 python scripts/run_stage3_transfer_summary.py \\
-  --transfer my_transfer.csv --out outputs/my_g3.csv`}</code></pre>
-        <p class="resource-note reading-width">
-          These commands compute summaries: G2 uses a single linear model; G3 averages
-          supplied runs by method and budget, without pairing seeds or estimating confidence
-          intervals. For a full audit, report split variability and endpoint uncertainty,
-          declare pass criteria and assign a reporting outcome using the definitions above.
+  --transfer my_transfer.csv --out outputs/my_g3_summary.csv`}</code></pre>
+        <p id="g3-summary-limit" class="resource-note reading-width">
+          <strong>G3 summary only, no pass/fail.</strong> The script averages supplied runs
+          by method and budget without pairing seeds or estimating confidence intervals.
+          Its output cannot establish a G3 pass. G2 likewise reports a single linear fit;
+          split variability and the declared prediction criteria require separate evaluation.
         </p>
+        <p class="reading-width">
+          For the paper’s accuracy comparisons, pair policy and baseline runs by seed and
+          compute a 95% confidence interval for the paired differences. The lower bound
+          must be above zero, together with the declared endpoint and protocol checks,
+          before reporting a G3 pass. A positive mean difference alone is insufficient.
+        </p>
+        <div class="reporting-step" aria-labelledby="reporting-step-title">
+          <h3 id="reporting-step-title">Assign the reporting outcome</h3>
+          <p class="reading-width">
+            After evaluating uncertainty and the predeclared criteria, record each gate as
+            passed, failed, inconclusive or unmeasured for the same proxy, target and protocol.
+            Then apply the paper’s assignment order manually:
+          </p>
+          <ol class="reporting-rules reading-width">
+            <li>When all three gates pass, report <strong>Validated surrogate</strong>.</li>
+            <li>When G3 passes without both G1 and G2 passing, report <strong>Operational-only effect</strong>.</li>
+            <li>For remaining relational evidence, use <strong>Target-specific relation</strong> if it is confined to an auxiliary target; otherwise, positive G1 and G2 support <strong>Predictive validity only</strong>.</li>
+            <li>Without matched positive G1/G2 evidence, measured weak G2 or an evaluated G3 without reliable benefit supports <strong>No reliable transfer</strong>. Use <strong>Weak evidence</strong> for remaining incomplete or inconclusive cases.</li>
+          </ol>
+          <p class="reading-width">Keep unmeasured gates distinct from failures, and report the audited setting and uncertainty with the assigned outcome.</p>
+        </div>
         <a class="source-link" href={`${artifact}/tree/${results.artifactCommit}/examples`}>Runnable example CSVs</a>
         <a class="source-link secondary-link" href={source('docs/CLAIM_TIER_GUIDE.md')}>Reporting guide</a>
       </section>
@@ -277,7 +300,7 @@ python scripts/run_stage3_transfer_summary.py \\
         <ul>
           <li>Selection and ordering results concern the tested scores, learners, budgets and checkpoint rules. Other curricula, weighting methods and tasks were not evaluated.</li>
           <li>DINOv2's first-learning prediction and selection accuracy use different targets. First-learning and GradNorm signals are target-specific; scalar fits do not measure all information in a representation.</li>
-          <li>The DDPM control does not distinguish harm from score–sample correspondence from the effect of blocked scheduling.</li>
+          <li>The DDPM control cannot tell whether the harm comes from score–sample correspondence or from blocked scheduling.</li>
           <li>The positive control tests retrieval, rather than retraining. The shaded near-zero band is descriptive, not a universal pass/fail threshold; a new audit must specify its criteria.</li>
         </ul>
       </aside>
