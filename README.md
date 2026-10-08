@@ -12,7 +12,9 @@ npm run build
 npm run preview
 ```
 
-The local route is `/cohe-project-page/`. GitHub Actions gets the real URL from `actions/configure-pages` and supplies `PAGES_URL` to Astro, deriving its site origin and base path rather than hardcoding a guessed domain. Publication requires Pages configured for GitHub Actions.
+The website is published at https://mint-lab.github.io/cohe/ from https://github.com/mint-lab/cohe. The local route is `/cohe/`. GitHub Actions gets the real URL from `actions/configure-pages` and supplies `PAGES_URL` to Astro, deriving its site origin and base path. Local builds default to the same canonical organization URL. Pages is configured for GitHub Actions.
+
+This repository preserves the academic website published by DayenaJeong/cohe-project-page at commit 60519483459d851250ae88627c0c7ff90363fbfc. The original site remains available, with no redirect enabled. Earlier QA documents describe the original hosting location; see [migration validation](docs/MIGRATION_REPORT.md) for the organization deployment.
 
 Scientific values live in `src/data/verified-results.json`, with publicly released input records and hashes under `src/data/records`. See [content provenance](docs/CONTENT_SOURCES.md) and [validation report](docs/QA_REPORT.md).
 
