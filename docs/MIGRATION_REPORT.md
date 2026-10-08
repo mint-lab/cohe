@@ -10,10 +10,10 @@ Copied source commit: 60519483459d851250ae88627c0c7ff90363fbfc
 
 ## Access and Pages configuration
 
-The currently authenticated account, minchi0304, is an active member of mint-lab.
-The organization permits members to create public repositories. The new public
-cohe repository was created successfully, and the account has admin and push
-permissions for that repository.
+The website is developed and maintained by Dayena Jeong (DayenaJeong).
+The public cohe repository was created after organization repository-creation
+access was verified. GitHub Pages publishing was configured with repository
+administration access.
 
 Pages was enabled through the repository API with build_type=workflow.
 The returned Pages URL is https://mint-lab.github.io/cohe/. The existing workflow
