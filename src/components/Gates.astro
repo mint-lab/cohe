@@ -14,32 +14,30 @@ const tiers = [
   ['No reliable transfer', 'G2 is measured weak or G3 has no reliable benefit, without matched positive G1 and G2 evidence.'],
 ];
 const flow = `${import.meta.env.BASE_URL}figures/cohe-protocol-web.svg`;
+const mobileFlow = `${import.meta.env.BASE_URL}figures/cohe-protocol-web-mobile.svg`;
 ---
 
 <section id="framework" class="section framework" aria-labelledby="framework-title">
   <h2 id="framework-title">Dependence, prediction and transfer</h2>
-  <ol class="gate-steps" aria-label="COHE evidence gates">
-    {gates.map((gate, i) => (
-      <li>
-        <article>
-          <span class="gate-label">G{i + 1} — {gate.name}</span>
-          <h3>{gate.question}</h3>
-          <p>{gate.explanation}</p>
-        </article>
-      </li>
-    ))}
-  </ol>
-  <p class="evidence-note reading-width">
+  <p class="reading-width">
     The paper calls this <strong>non-transitivity</strong>: ranking agreement, held-out
     prediction and downstream benefit do not automatically imply one another.
   </p>
   <figure class="paper-figure protocol-figure">
     <a href={flow} aria-label="Open the COHE audit flow at full resolution">
-      <img src={flow} alt="COHE checks a proxy, target and protocol for dependence, held-out prediction and operational transfer, then reports one of the six outcomes defined below." loading="lazy" width="1110" height="240" />
+      <picture>
+        <source media="(max-width: 600px)" srcset={mobileFlow} width="480" height="760" />
+        <img src={flow} alt="A proxy–target–protocol tuple feeds three parallel evidence gates: dependence, held-out prediction and operational transfer. Joint evidence supports one of six reporting tiers; the gates are not a sequential cascade." loading="lazy" width="1100" height="500" />
+      </picture>
     </a>
-    <figcaption>Audit flow with the paper’s six reporting outcomes. <a href={flow}>View at full size</a></figcaption>
+    <figcaption>Separately evaluated gates, combined evidence. <a href={flow}>View at full size</a></figcaption>
   </figure>
-  <div class="tier-legend" aria-labelledby="tiers-title">
+  <p class="framework-note reading-width">G3 alone can support an <strong>Operational-only effect</strong>. An unmeasured gate is not a failure.</p>
+  <details class="tier-legend">
+    <summary>Gate definitions and six reporting tiers</summary>
+    <ul class="gate-definitions" aria-label="COHE evidence gates">
+      {gates.map((gate, i) => <li><span class={`gate-label g${i + 1}`}>G{i + 1} — {gate.name}</span><h3>{gate.question}</h3><p>{gate.explanation}</p></li>)}
+    </ul>
     <h3 id="tiers-title">Six reporting outcomes</h3>
     <p class="reading-width">The paper groups audit reports into six tiers for the stated proxy, target and protocol.</p>
     <dl>
@@ -47,5 +45,5 @@ const flow = `${import.meta.env.BASE_URL}figures/cohe-protocol-web.svg`;
     </dl>
     <p class="reading-width">An unmeasured gate is not a failure. A failed G3 preserves positive G1/G2 evidence; auxiliary-target relations retain their own label.</p>
     <a class="source-link" href={source('docs/CLAIM_TIER_GUIDE.md')}>Definitions and assignment order</a>
-  </div>
+  </details>
 </section>

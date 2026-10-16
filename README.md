@@ -1,6 +1,6 @@
 # COHE project website
 
-An independent, static Astro/TypeScript website for Dayena Jeong and Sunglok Choi's NeurIPS 2026 Evaluations & Datasets paper. The scientific artifact is maintained separately at https://github.com/DayenaJeong/cohe-artifact and is not changed by this repository.
+An independent, static Astro/TypeScript website for Dayena Jeong and Sunglok Choi's NeurIPS 2026 Evaluations & Datasets paper. The scientific artifact is maintained separately at https://github.com/DayenaJeong/cohe and is not changed by this repository.
 
 Use Node 22.12+ and npm 9.6.5+:
 

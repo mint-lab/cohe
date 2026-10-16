@@ -1,0 +1,49 @@
+---
+import { results, summaryEvidence, number } from '../data/results';
+const base = import.meta.env.BASE_URL;
+const positive = results.positive;
+---
+<section id="key-findings" class="section evidence-summary" aria-labelledby="key-findings-title">
+  <h2 id="key-findings-title">Key findings</h2>
+  <p class="reading-width">Four audit settings show why agreement, prediction and operational benefit support different claims.</p>
+  <div class="evidence-table-wrap" tabindex="0" role="region" aria-label="COHE evidence summary">
+    <table class="evidence-table" role="table">
+      <caption>Representative COHE audit settings (paper Table 6)</caption>
+      <thead>
+        <tr role="row"><th scope="col">Audit setting</th><th scope="col" class="g1">G1 <span>Dependence</span></th><th scope="col" class="g2">G2 <span>Prediction</span></th><th scope="col" class="g3">G3 <span>Operational transfer</span></th><th scope="col">Supported tier</th></tr>
+      </thead>
+      <tbody>
+        <tr role="row">
+          <th scope="row" role="rowheader">Generative proxies <span class="cell-note">→ CE/margin</span></th>
+          <td role="cell" data-label="G1 · Dependence" class="g1"><span>Weak alignment</span></td>
+          <td role="cell" data-label="G2 · Prediction" class="g2"><span>Near-zero</span><span class="cell-note">CE R² ≈ {number(summaryEvidence.generativeCER2, 4)}</span></td>
+          <td role="cell" data-label="G3 · Operational transfer" class="g3"><span>No consistent benefit</span><span class="cell-note">under tested policies</span></td>
+          <td role="cell" data-label="Supported tier"><strong>No reliable transfer</strong></td>
+        </tr>
+        <tr role="row">
+          <th scope="row" role="rowheader">DINOv2 <span class="cell-note">→ first-learning</span></th>
+          <td role="cell" data-label="G1 · Dependence" class="g1"><strong>ρ = {number(results.firstLearning.rho, 4)}</strong></td>
+          <td role="cell" data-label="G2 · Prediction" class="g2"><strong>R² = {number(results.firstLearning.r2, 4)}</strong></td>
+          <td role="cell" data-label="G3 · Operational transfer" class="g3"><span>Hard-only accuracy fails<sup>†</sup></span><span class="cell-note"><strong>{number(results.dino[0].delta)} pp</strong> at 10% versus Random</span></td>
+          <td role="cell" data-label="Supported tier"><strong>Target-specific relation</strong></td>
+        </tr>
+        <tr role="row">
+          <th scope="row" role="rowheader">Cross-architecture <span class="cell-note">CE ranking</span></th>
+          <td role="cell" data-label="G1 · Dependence" class="g1"><strong>ρ = {number(summaryEvidence.crossArchitectureRho[0], 3)}–{number(summaryEvidence.crossArchitectureRho[1], 3)}</strong></td>
+          <td role="cell" data-label="G2 · Prediction" class="g2"><span class="unmeasured">Not evaluated</span></td>
+          <td role="cell" data-label="G3 · Operational transfer" class="g3"><span class="unmeasured">Not evaluated</span></td>
+          <td role="cell" data-label="Supported tier"><strong>Weak evidence</strong><span class="cell-note">G1 only</span></td>
+        </tr>
+        <tr role="row">
+          <th scope="row" role="rowheader">ImageNet-1K CE <span class="cell-note">retrieval/triage</span></th>
+          <td role="cell" data-label="G1 · Dependence" class="g1"><span class="evidence-state">Pass</span><strong>ρ = {number(positive.gate1.spearman_rho, 3)}</strong></td>
+          <td role="cell" data-label="G2 · Prediction" class="g2"><span class="evidence-state">Pass</span><strong>R² = {number(positive.gate2.r2_mean, 4)}</strong></td>
+          <td role="cell" data-label="G3 · Operational transfer" class="g3"><span class="evidence-state">Pass · top-10% recall</span><strong>{number(positive.gate3[0].recall * 100)}%</strong><span class="cell-note">{number(positive.gate3[0].enrichment)}× enrichment</span></td>
+          <td role="cell" data-label="Supported tier"><strong>Validated surrogate</strong><span class="cell-note">for retrieval/triage only</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="summary-note"><sup>†</sup> DINOv2 G1/G2 concern first-learning; G3 tests CIFAR-100/ResNet-18 accuracy selection. The generative row summarizes multiple audited settings.</p>
+  <a class="source-link" href={`${base}paper.pdf`}>Paper Table 6 and appendix</a>
+</section>

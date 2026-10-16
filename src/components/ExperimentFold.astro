@@ -1,0 +1,23 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  dataset: string;
+  conclusion: string;
+  metric: string;
+  metricLabel: string;
+}
+const { id, title, dataset, conclusion, metric, metricLabel } = Astro.props;
+---
+<details id={id} class="experiment-fold">
+  <summary>
+    <span class="experiment-summary-copy">
+      <span class="experiment-title">{title}</span>
+      <span class="experiment-dataset">{dataset}</span>
+      <span class="experiment-conclusion">{conclusion}</span>
+    </span>
+    <span class="experiment-metric"><strong>{metric}</strong><span>{metricLabel}</span></span>
+    <svg class="fold-chevron" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="m5 7.5 5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5" /></svg>
+  </summary>
+  <div class="experiment-body"><slot /></div>
+</details>

@@ -2,7 +2,10 @@
 import '../styles/global.css';
 import Gates from '../components/Gates.astro';
 import EffectPlot from '../components/EffectPlot.astro';
-import { results, artifact, release, paper, source, number, bibtex } from '../data/results';
+import Proceedings from '../components/Proceedings.astro';
+import EvidenceSummary from '../components/EvidenceSummary.astro';
+import ExperimentFold from '../components/ExperimentFold.astro';
+import { results, artifact, release, source, number, bibtex, summaryEvidence } from '../data/results';
 const base = import.meta.env.BASE_URL;
 const title = 'COHE: Auditing Non-Transitivity in Sample Difficulty Proxies for Vision Models';
 const description = 'COHE studies when sample difficulty scores predict learning and when they help data selection. NeurIPS 2026 Evaluations & Datasets.';
@@ -86,21 +89,22 @@ const coverage = [
           <a class="button" href={artifact}>Code</a>
           <a class="button" href={release}>Checkpoints</a>
         </nav>
-        <a class="conference-link" href={paper}>Conference record</a>
       </header>
+
+      <Proceedings />
 
       <section id="abstract" class="section overview" aria-labelledby="abstract-title">
         <h2 id="abstract-title">The study</h2>
-        <p class="reading-width">
-          COHE compares reconstruction error, denoising error, token likelihood and DINOv2
-          isolation with supervised difficulty targets. Experiments measure rank agreement
-          and held-out prediction, then test subset selection, full-data sample ordering
-          and retrieval against matched baselines.
-        </p>
+        <div class="study-copy reading-width">
+          <p>COHE evaluates whether label-free sample scores support claims about discriminative difficulty and downstream usefulness.</p>
+          <p>Experiments pair reconstruction error, denoising error, token likelihood and DINOv2 isolation with supervised targets. Dependence and held-out prediction are assessed separately from operational tests of subset selection, full-data ordering and retrieval against matched baselines.</p>
+        </div>
         <a class="source-link" href={`${base}paper.pdf#page=1`}>Read the full abstract in the paper</a>
       </section>
 
       <Gates />
+
+      <EvidenceSummary />
 
       <section id="results" class="section" aria-labelledby="results-title">
         <span id="findings" class="anchor-alias" aria-hidden="true"></span>
@@ -110,13 +114,14 @@ const coverage = [
           In the DINOv2 and DDPM difference plots, negative values favor the baseline.
           Whiskers are paired Student-t 95% confidence intervals.
         </p>
+        <ExperimentFold id="dinov2-selection" title="DINOv2 hard-sample selection" dataset="CIFAR-100, ResNet-18" conclusion="First-learning prediction does not imply useful hard-only selection." metric={`${number(results.dino[0].delta)} pp`} metricLabel="at 10% budget">
         <article class="case-study">
           <div class="case-copy">
-            <h3>DINOv2 hard-sample selection</h3>
+            <h3 class="sr-only">DINOv2 hard-sample selection</h3>
             <p class="experiment-label">CIFAR-100, DINOv2 isolation</p>
             <p>Hard-only selection underperforms Random in every tested condition.</p>
             <p>
-              For first-learning, rank correlation is ρ = {number(results.firstLearning.rho, 4)}
+              For first-learning, rank correlation is ρ = {number(results.firstLearning.rho, 4)}{' '}
               and held-out prediction is R² = {number(results.firstLearning.r2, 4)}.
               This auxiliary-target relation measures when samples are learned; the selection
               experiment below measures test accuracy.
@@ -141,9 +146,11 @@ const coverage = [
             </details>
           </div>
         </article>
+        </ExperimentFold>
+        <ExperimentFold id="ddpm-ordering" title="DDPM sample ordering" dataset="CIFAR-100, ResNet-18" conclusion="Blocked ordering does not establish a score-specific benefit." metric={`${number(results.ddpm[0].delta)} pp`} metricLabel="versus global Random">
         <article class="case-study">
           <div class="case-copy">
-            <h3>DDPM sample ordering</h3>
+            <h3 class="sr-only">DDPM sample ordering</h3>
             <p class="experiment-label">CIFAR-100, DDPM difficulty scores</p>
             <p>Easy-to-Hard and Shuffled-Proxy Order both fall below global Random ordering.</p>
             <p class="experiment-meta">ResNet-18, {results.ddpm[0].n} paired seeds. Both blocked schedules use the same full data and optimizer step count.</p>
@@ -158,9 +165,11 @@ const coverage = [
             </div>
           </div>
         </article>
+        </ExperimentFold>
+        <ExperimentFold id="imagenet-selection" title="ImageNet-1K subset selection" dataset="ImageNet-1K, ResNet-18" conclusion="Class-balanced VAE-hard selection trails balanced Random." metric={`${number(results.imagenet.best.delta, 3)} pp`} metricLabel="at 30% budget">
         <article class="case-study">
           <div class="case-copy">
-            <h3>ImageNet-1K subset selection</h3>
+            <h3 class="sr-only">ImageNet-1K subset selection</h3>
             <p class="experiment-label">ImageNet-1K, VAE reconstruction scores</p>
             <p>Class-balanced VAE-hard selection underperforms balanced Random.</p>
             <p class="experiment-meta">ResNet-18 from scratch, {results.imagenet.best.n} matched seed pairs. Both arms use the same best-validation-Top-1 checkpoint rule.</p>
@@ -190,24 +199,43 @@ const coverage = [
             </details>
           </div>
         </article>
+        </ExperimentFold>
+        <ExperimentFold id="retrieval-control" title="Task-aligned retrieval control" dataset="ImageNet-1K validation" conclusion="Task-aligned CE ranking passes all gates for retrieval/triage." metric={`${number(results.positive.gate3[0].recall * 100)}% recall`} metricLabel="at a top-10% budget">
         <aside class="positive-control">
-          <h3>Task-aligned retrieval</h3>
+          <h3 class="sr-only">Task-aligned retrieval</h3>
           <p class="reading-width">
-            ResNet-18 CE retrieves <strong>{number(results.positive.gate3[0].recall * 100)}%</strong>
-            of ResNet-50's target-hard samples at a top-{number(results.positive.gate3[0].q * 100, 0)}%
+            ResNet-18 CE retrieves <strong>{number(results.positive.gate3[0].recall * 100)}%</strong>{' '}
+            of ResNet-50's target-hard samples at a top-{number(results.positive.gate3[0].q * 100, 0)}%{' '}
             budget, compared with {number(results.positive.gate3[0].q * 100, 0)}% expected under Random.
           </p>
+          <p class="experiment-meta">ImageNet-1K validation. The proxy is ResNet-18 CE; the target is ResNet-50 CE. The endpoint is retrieval/triage of target-hard samples.</p>
+          <figure class="accuracy-chart retrieval-chart" aria-label="Top-10% target-hard retrieval recall versus Random">
+            <div class="plot-key"><span>Top-10% target-hard retrieval</span><span>Recall (%)</span></div>
+            {[{ label: 'Task-aligned CE', value: results.positive.gate3[0].recall }, { label: 'Random expectation', value: results.positive.gate3[0].random_expected_recall }].map((r, i) => (
+              <div class="accuracy-row">
+                <div><span>{r.label}</span><strong>{number(r.value * 100)}%</strong></div>
+                <div class="accuracy-track"><span class={i === 0 ? 'hard-bar' : 'random-bar'} style={`width:${r.value * 100}%`}></span></div>
+              </div>
+            ))}
+            <figcaption>The shuffled-ranking 97.5th percentile is {number(results.positive.gate3[0].null_p97_5 * 100, 3)}%. This null percentile is not a confidence interval or evidence of retraining benefit.</figcaption>
+          </figure>
           <a class="source-link" href={source(results.sources.positive)}>Control evidence</a>
         </aside>
+        </ExperimentFold>
+        <ExperimentFold id="predictive-validity" title="Held-out predictive validity" dataset="CIFAR-100, held-out splits" conclusion="Generative scalar proxies explain essentially none of CE variance." metric={`R² ≈ ${number(summaryEvidence.generativeCER2, 4)}`} metricLabel="multi-proxy CE prediction">
         <div id="paper-figures" class="predictive-figure">
-          <h3>Held-out predictive validity</h3>
+          <h3 class="sr-only">Held-out predictive validity</h3>
+          <p class="experiment-meta">Single-proxy linear fits and multi-proxy HistGBDT are evaluated over five held-out split seeds on CIFAR-100. The targets include CE, margin, GradNorm and training dynamics.</p>
           <figure class="paper-figure">
             <a href={`${base}figures/predictive-validity.svg`} aria-label="Open the predictive validity figure at full resolution">
               <img src={`${base}figures/predictive-validity.svg`} alt="Held-out R-squared for single and multi-proxy predictors. CE and margin are close to zero; first-learning has a larger value." loading="lazy" width="539.163375" height="203.372584" />
             </a>
             <figcaption>Prediction from generative proxy scores. Error bars show 95% confidence intervals over held-out splits.</figcaption>
           </figure>
+          <a class="source-link" href={`${base}figures/predictive-validity.svg`}>Full-size plot</a>
+          <a class="source-link secondary-link" href={source('results/aggregate/predictive_validity/predictive_power_per_split.csv')}>Split records</a>
         </div>
+        </ExperimentFold>
       </section>
 
       <section id="apply" class="section" aria-labelledby="apply-title">
@@ -318,6 +346,21 @@ python scripts/run_stage3_transfer_summary.py \\
       menu?.addEventListener('keydown', event => {
         if (event.key === 'Escape') { menu.open = false; menu.querySelector('summary')?.focus(); }
       });
+      // Reveal only the experiment addressed by a URL hash; fresh visits stay folded.
+      const revealHash = () => {
+        let id: string;
+        try { id = decodeURIComponent(window.location.hash.slice(1)); } catch { return; }
+        const target = document.getElementById(id);
+        if (!target) return;
+        let element: HTMLElement | null = target;
+        while (element) {
+          if (element instanceof HTMLDetailsElement) element.open = true;
+          element = element.parentElement;
+        }
+        requestAnimationFrame(() => target.scrollIntoView({ block: 'start', behavior: 'auto' }));
+      };
+      window.addEventListener('hashchange', revealHash);
+      if (window.location.hash) revealHash();
       const button = document.querySelector<HTMLButtonElement>('#copy-bibtex');
       button?.addEventListener('click', async () => {
         const text = document.querySelector('#bibtex')?.textContent ?? '';

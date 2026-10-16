@@ -1,0 +1,13 @@
+---
+import { paper, proceedings } from '../data/results';
+---
+<aside class="proceedings-panel" aria-labelledby="proceedings-title">
+  <div>
+    <p class="publication-meta">Evaluations &amp; Datasets Track <span>Accepted paper</span></p>
+    <h2 id="proceedings-title">NeurIPS 2026 Proceedings</h2>
+  </div>
+  <div class="publication-status">
+    <span class="status-label">{proceedings.url ? 'Published proceedings' : 'Proceedings forthcoming'}</span>
+    <a href={proceedings.url ?? paper}>{proceedings.url ? 'View proceedings paper' : 'View NeurIPS paper record'}</a>
+  </div>
+</aside>
