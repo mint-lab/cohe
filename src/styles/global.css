@@ -58,7 +58,9 @@ main { padding-top: 64px; }
 .status-label { font-weight: 600; color: var(--teal); }
 .overview { padding-top: 32px; border-top: 1px solid var(--rule); }
 .study-copy { max-width: 67ch; text-wrap: pretty; }
-.study-copy p { line-height: 1.8; }
+.study-copy p { line-height: 1.8; text-wrap: balance; }
+.study-copy p + p { margin-top: 16px; }
+.study-copy + .source-link { margin-top: 16px; }
 summary { width: fit-content; padding-block: 6px; cursor: pointer; }
 
 .gate-steps { display: grid; grid-template-columns: repeat(3, 1fr); list-style: none; padding: 0; margin: 28px 0 0; border-block: 1px solid var(--rule); }
