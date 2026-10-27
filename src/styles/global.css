@@ -57,8 +57,9 @@ main { padding-top: 64px; }
 .publication-status { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; flex-shrink: 0; font-size: 14px; }
 .status-label { font-weight: 600; color: var(--teal); }
 .overview { padding-top: 32px; border-top: 1px solid var(--rule); }
-.study-copy { max-width: 67ch; text-wrap: pretty; }
-.study-copy p { line-height: 1.8; text-wrap: balance; }
+.study-copy { max-width: 60ch; text-wrap: pretty; }
+.study-copy p { line-height: 1.8; }
+.study-copy .study-ending { display: inline-block; max-width: 100%; vertical-align: top; }
 .study-copy p + p { margin-top: 16px; }
 .study-copy + .source-link { margin-top: 16px; }
 summary { width: fit-content; padding-block: 6px; cursor: pointer; }
